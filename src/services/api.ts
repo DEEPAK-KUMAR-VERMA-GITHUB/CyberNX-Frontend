@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/v1";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://cyber-nx-backend.vercel.app/api/v1";
 
 // axios instance
 const api = axios.create({
