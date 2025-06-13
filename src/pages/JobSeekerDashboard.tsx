@@ -10,13 +10,14 @@ import {
 } from "recharts";
 import { useStore } from "../store";
 import { applicationService } from "../services/application.service";
+import { jobService } from "../services/job.service";
 
 function JobSeekerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
   const currentUser = useStore((state) => state.currentUser);
 
   const [userApplications, setUserApplications] = useState([]);
-  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [appliedJobs, setAppliedJobs] = useState({});
   const [applicationData, setApplicationData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -25,23 +26,46 @@ function JobSeekerDashboard() {
       try {
         setIsLoading(true);
         if (currentUser?._id) {
-          const applications = applicationService.getUserApplications();
+          // Get user applications
+          const applications = await applicationService.getUserApplications(
+            currentUser._id
+          );
           setUserApplications(applications);
 
+          // Get job details for each application
           const jobIds = applications.map((app) => app.jobId);
           if (jobIds.length > 0) {
-            setAppliedJobs(jobIds);
+            const jobs = await jobService.getJobsByIds(jobIds);
+            const jobsMap = {};
+            jobs.forEach((job) => {
+              jobsMap[job._id] = job;
+            });
+            setAppliedJobs(jobsMap);
           }
+
+          // Generate chart data
+          generateApplicationData(applications);
+        } else {
+          setApplicationData(generateEmptyWeekData());
         }
-        generateApplicationData(userApplications);
       } catch (error) {
-        console.error("Error fetching dashboard data : ", error);
+        console.error("Error fetching dashboard data:", error);
+        setApplicationData(generateEmptyWeekData());
       } finally {
         setIsLoading(false);
       }
     };
+
     fetchData();
   }, [currentUser]);
+
+  const generateEmptyWeekData = () => {
+    const weekLabels = [];
+    for (let i = 5; i >= 0; i--) {
+      weekLabels.push(`Week ${6 - i}`);
+    }
+    return weekLabels.map((week) => ({ week, applications: 0 }));
+  };
 
   const generateApplicationData = (applications) => {
     // Initialize data for the past 6 weeks
@@ -49,13 +73,12 @@ function JobSeekerDashboard() {
     const weekData = {};
 
     for (let i = 5; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i * 7);
       const weekLabel = `Week ${6 - i}`;
       weekLabels.push(weekLabel);
       weekData[weekLabel] = 0;
     }
 
+    // Count applications per week
     applications.forEach((app) => {
       const appDate = new Date(app.appliedDate);
       const now = new Date();
@@ -69,6 +92,7 @@ function JobSeekerDashboard() {
         weekData[weekLabel]++;
       }
     });
+
     // Format data for chart
     const chartData = weekLabels.map((week) => ({
       week,
@@ -179,34 +203,49 @@ function JobSeekerDashboard() {
               </tr>
             </thead>
             <tbody>
-              {userApplications.map((app, index) => {
-                return (
-                  <tr
-                    key={app.id}
-                    className={`${
-                      isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"
-                    }`}
+              {userApplications.length > 0 ? (
+                userApplications.map((app) => {
+                  const job = appliedJobs[app.jobId];
+                  return (
+                    <tr
+                      key={app._id}
+                      className={`${
+                        isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <td className="px-6 py-4">
+                        {job?.title || "Unknown Job"}
+                      </td>
+                      <td className="px-6 py-4">
+                        {job?.company || "Unknown Company"}
+                      </td>
+                      <td className="px-6 py-4">{app.appliedDate}</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm ${
+                            app.status === "Pending"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : app.status === "Accepted"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {app.status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="px-6 py-4 text-center text-gray-500"
                   >
-                    <td className="px-6 py-4">{job?.title}</td>
-                    <td className="px-6 py-4">{job?.company}</td>
-                    <td className="px-6 py-4">{app.appliedDate}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm ${
-                          app.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : app.status === "Accepted"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {app.status.charAt(0).toUpperCase() +
-                          app.status.slice(1)}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+                    No applications found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
