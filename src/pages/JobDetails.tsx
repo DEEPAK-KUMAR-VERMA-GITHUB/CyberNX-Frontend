@@ -32,7 +32,7 @@ function JobDetails() {
       const response = await applicationService.getUserApplications();
       const applied = response.applications.some((application) =>
         typeof application.jobId === "object"
-          ? application.job._id.toString() === jobId
+          ? application.jobId._id.toString() === jobId
           : application.jobId === jobId
       );
       setHasApplied(applied);
