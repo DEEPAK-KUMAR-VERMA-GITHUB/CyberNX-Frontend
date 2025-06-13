@@ -99,6 +99,11 @@ function JobSeekerDashboard() {
     setApplicationData(chartData);
   };
 
+  const formatDate = (date) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(date).toLocaleDateString(undefined, options);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -211,12 +216,14 @@ function JobSeekerDashboard() {
                       }`}
                     >
                       <td className="px-6 py-4">
-                        {job?.title || "Unknown Job"}
+                        {job?.jobId?.title || "Unknown Job"}
                       </td>
                       <td className="px-6 py-4">
-                        {job?.company || "Unknown Company"}
+                        {job?.jobId?.company || "Unknown Company"}
                       </td>
-                      <td className="px-6 py-4">{app.appliedDate}</td>
+                      <td className="px-6 py-4">
+                        {formatDate(app.appliedDate)}
+                      </td>
                       <td className="px-6 py-4">
                         <span
                           className={`px-3 py-1 rounded-full text-sm ${
