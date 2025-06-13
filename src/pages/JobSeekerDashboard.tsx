@@ -207,7 +207,6 @@ function JobSeekerDashboard() {
             <tbody>
               {userApplications.length > 0 ? (
                 userApplications.map((app) => {
-                  const job = appliedJobs[app.jobId];
                   return (
                     <tr
                       key={app._id}
@@ -216,10 +215,10 @@ function JobSeekerDashboard() {
                       }`}
                     >
                       <td className="px-6 py-4">
-                        {job?.jobId?.title || "Unknown Job"}
+                        {app?.jobId?.title || "Unknown Job"}
                       </td>
                       <td className="px-6 py-4">
-                        {job?.jobId?.company || "Unknown Company"}
+                        {app?.jobId?.company || "Unknown Company"}
                       </td>
                       <td className="px-6 py-4">
                         {formatDate(app.appliedDate)}
