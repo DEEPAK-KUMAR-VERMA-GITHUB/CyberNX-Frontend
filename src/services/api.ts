@@ -21,14 +21,16 @@ const api = {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
+    console.log(await response.json());
+
+    return await response.json();
   },
-  
+
   // GET request
   get: async (endpoint: string, options: RequestInit = {}) => {
     return api.fetch(endpoint, { ...options, method: "GET" });
   },
-  
+
   // POST request
   post: async (endpoint: string, data: any, options: RequestInit = {}) => {
     return api.fetch(endpoint, {
@@ -37,7 +39,7 @@ const api = {
       body: JSON.stringify(data),
     });
   },
-  
+
   // PUT request
   put: async (endpoint: string, data: any, options: RequestInit = {}) => {
     return api.fetch(endpoint, {
@@ -46,7 +48,7 @@ const api = {
       body: JSON.stringify(data),
     });
   },
-  
+
   // DELETE request
   delete: async (endpoint: string, options: RequestInit = {}) => {
     return api.fetch(endpoint, { ...options, method: "DELETE" });
