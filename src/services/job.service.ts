@@ -10,13 +10,13 @@ export const jobService = {
       filters as Record<string, string>
     ).toString();
     const response = await api.get(`/jobs?${queryString}`);
-    return response.data;
+    return response;
   },
 
   // Get job by ID
   getJobById: async (id: string): Promise<{ success: boolean; job: Job }> => {
     const response = await api.get(`/jobs/${id}`);
-    return response.data;
+    return response;
   },
 
   // Create new job
@@ -24,7 +24,7 @@ export const jobService = {
     jobData: Omit<Job, "id" | "postedDate" | "employer">
   ): Promise<{ success: boolean; message: string; job: Job }> => {
     const response = await api.post("/jobs", jobData);
-    return response.data;
+    return response;
   },
 
   // Update job
@@ -33,7 +33,7 @@ export const jobService = {
     jobData: Partial<Job>
   ): Promise<{ success: boolean; message: string; job: Job }> => {
     const response = await api.put(`/jobs/${id}`, jobData);
-    return response.data;
+    return response;
   },
 
   // Delete job
@@ -41,7 +41,7 @@ export const jobService = {
     id: string
   ): Promise<{ success: boolean; message: string }> => {
     const response = await api.delete(`/jobs/${id}`);
-    return response.data;
+    return response;
   },
 
   // Get employer's jobs
@@ -51,6 +51,6 @@ export const jobService = {
     jobs: Job[];
   }> => {
     const response = await api.get("/jobs/employer/jobs");
-    return response.data;
+    return response;
   },
 };

@@ -21,8 +21,6 @@ const api = {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    console.log(await response.json());
-
     return response.json();
   },
 

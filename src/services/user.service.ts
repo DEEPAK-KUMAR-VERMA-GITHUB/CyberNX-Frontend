@@ -19,17 +19,17 @@ export const userService = {
     userData: Omit<User, "id" | "createdAt" | "updatedAt" | "status">
   ): Promise<IRegisterResponse> => {
     const response = await api.post("/users/register", userData);
-    return response.data;
+    return response;
   },
 
   login: async (email: string, password: string): Promise<ILoginResponse> => {
     const response = await api.post("/users/login", { email, password });
-    return response.data;
+    return response;
   },
 
   logout: async (): Promise<{ success: boolean; message: string }> => {
     const response = await api.post("/users/logout");
-    return response.data;
+    return response;
   },
 
   getCurrentUser: async (): Promise<{
@@ -38,7 +38,7 @@ export const userService = {
   } | null> => {
     try {
       const response = await api.get("/users/me");
-      return response.data;
+      return response;
     } catch (error) {
       return null;
     }

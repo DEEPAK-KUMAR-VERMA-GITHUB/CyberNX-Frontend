@@ -17,7 +17,7 @@ export const applicationService = {
       coverLetter,
       resume,
     });
-    return response.data;
+    return response;
   },
 
   // Get user's applications
@@ -27,7 +27,7 @@ export const applicationService = {
     applications: Application[];
   }> => {
     const response = await api.get("/applications/user");
-    return response.data;
+    return response;
   },
 
   // Get job applications (for employers)
@@ -39,6 +39,6 @@ export const applicationService = {
     applications: Application[];
   }> => {
     const response = await api.get(`/applications/job/${jobId}`);
-    return response.data;
+    return response;
   },
 };
