@@ -27,21 +27,17 @@ function JobSeekerDashboard() {
         setIsLoading(true);
         if (currentUser?._id) {
           // Get user applications
-          const applications = await applicationService.getUserApplications(
-            currentUser._id
-          );
+          const applications = await applicationService.getUserApplications();
           setUserApplications(applications);
 
           // Get job details for each application
-          const jobIds = applications.map((app) => app.jobId);
-          if (jobIds.length > 0) {
-            const jobs = await jobService.getJobsByIds(jobIds);
-            const jobsMap = {};
-            jobs.forEach((job) => {
-              jobsMap[job._id] = job;
-            });
-            setAppliedJobs(jobsMap);
-          }
+
+          const jobs = applications?.map((app) => app.jobId) || [];
+          const jobsMap = {};
+          jobs.forEach((job) => {
+            jobsMap[job._id] = job;
+          });
+          setAppliedJobs(jobsMap);
 
           // Generate chart data
           generateApplicationData(applications);
