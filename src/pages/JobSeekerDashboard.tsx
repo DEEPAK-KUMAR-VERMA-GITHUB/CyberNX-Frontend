@@ -9,17 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useStore } from "../store";
-import { dummyApplications, dummyJobs } from "../data";
 import { applicationService } from "../services/application.service";
-
-const applicationData = [
-  { week: "Week 1", applications: 3 },
-  { week: "Week 2", applications: 5 },
-  { week: "Week 3", applications: 2 },
-  { week: "Week 4", applications: 7 },
-  { week: "Week 5", applications: 4 },
-  { week: "Week 6", applications: 6 },
-];
 
 function JobSeekerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
@@ -43,6 +33,7 @@ function JobSeekerDashboard() {
             setAppliedJobs(jobIds);
           }
         }
+        generateApplicationData(userApplications);
       } catch (error) {
         console.error("Error fetching dashboard data : ", error);
       } finally {
@@ -189,7 +180,6 @@ function JobSeekerDashboard() {
             </thead>
             <tbody>
               {userApplications.map((app, index) => {
-                const job = dummyJobs.find((j) => j.id === app.jobId);
                 return (
                   <tr
                     key={app.id}
