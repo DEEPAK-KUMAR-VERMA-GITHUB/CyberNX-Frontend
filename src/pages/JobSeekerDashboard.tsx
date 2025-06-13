@@ -27,7 +27,8 @@ function JobSeekerDashboard() {
         setIsLoading(true);
         if (currentUser?._id) {
           // Get user applications
-          const applications = await applicationService.getUserApplications();
+          const { applications } =
+            await applicationService.getUserApplications();
           setUserApplications(applications);
 
           // Get job details for each application
