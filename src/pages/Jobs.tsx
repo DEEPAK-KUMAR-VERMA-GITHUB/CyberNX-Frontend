@@ -28,6 +28,7 @@ function Jobs() {
         Object.entries(filters).filter(([_, v]) => v !== "")
       );
       const response = await jobService.getAllJobs(activeFilters);
+      console.log("Respnse ", response);
       setJobs(response.jobs);
     } catch (error) {
       console.error("Error fetching jobs:", error);

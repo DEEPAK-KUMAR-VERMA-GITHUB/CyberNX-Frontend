@@ -23,7 +23,7 @@ const api = {
 
     console.log(await response.json());
 
-    return await response.json();
+    return response.json();
   },
 
   // GET request
